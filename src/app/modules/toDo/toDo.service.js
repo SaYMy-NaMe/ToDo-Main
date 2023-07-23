@@ -71,11 +71,33 @@ const updateToDoInDB = async (id, payload, user) => {
   return updatedToDo;
 };
 
+const deleteToDoFromDB = async (id, user) => {
+  const selectQuery = "SELECT * FROM todos WHERE id = $1";
+  const selectValues = [id];
+
+  const todo = (await pool.query(selectQuery, selectValues)).rows[0];
+
+  if (!todo) {
+    throw new ApiError(404, "ToDo item not found.");
+  }
+
+  if (todo.user_id !== user.id) {
+    throw new ApiError(401, "You are not authorized to access this ToDo.");
+  }
+
+  const deleteQuery = "DELETE FROM todos WHERE id = $1";
+  const deleteValues = [id];
+
+  await pool.query(deleteQuery, deleteValues);
+
+  return todo;
+};
+
 const toDoService = {
   createToDoInDB,
   getAllToDoFromDB,
   updateToDoInDB,
-
+  deleteToDoFromDB,
 };
 
 module.exports = toDoService;

@@ -49,10 +49,25 @@ const updateToDo = catchAsync(async (req, res) => {
   });
 });
 
+const deleteToDo = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const user = req.verifiedUser;
+
+  const result = await toDoService.deleteToDoFromDB(id, user);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "ToDo item Deleted successfully.",
+    data: result,
+  });
+});
+
 const toDoController = {
   createToDo,
   getAllToDo,
   updateToDo,
+  deleteToDo,
 };
 
 module.exports = toDoController;
