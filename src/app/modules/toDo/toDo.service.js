@@ -22,10 +22,60 @@ const getAllToDoFromDB = async (user) => {
   return result;
 };
 
+const updateToDoInDB = async (id, payload, user) => {
+  const { title, description, is_done } = payload;
+  const values = [];
+  const updateFields = [];
+
+  const selectQuery = "SELECT * FROM todos WHERE id = $1";
+  const selectValues = [id];
+
+  const todo = (await pool.query(selectQuery, selectValues)).rows[0];
+
+  if (!todo) {
+    throw new ApiError(404, "ToDo item not found.");
+  }
+
+  if (todo.user_id !== user.id) {
+    throw new ApiError(401, "You are not authorized to access this ToDo.");
+  }
+
+  if (title) {
+    updateFields.push(`title = $${values.length + 1}`);
+    values.push(title);
+  }
+
+  if (description) {
+    updateFields.push(`description = $${values.length + 1}`);
+    values.push(description);
+  }
+
+  if (is_done !== undefined) {
+    updateFields.push(`is_done = $${values.length + 1}`);
+    values.push(is_done);
+  }
+
+  if (updateFields.length === 0) {
+    throw new ApiError(400, "No fields to update.");
+  }
+
+  const updateQuery = `UPDATE todos SET ${updateFields.join(
+    ", "
+  )}, updated_at = current_timestamp WHERE id = $${
+    values.length + 1
+  } RETURNING *`;
+  values.push(id);
+
+  const updatedToDo = (await pool.query(updateQuery, values)).rows[0];
+
+  return updatedToDo;
+};
 
 const toDoService = {
   createToDoInDB,
   getAllToDoFromDB,
+  updateToDoInDB,
+
 };
 
 module.exports = toDoService;

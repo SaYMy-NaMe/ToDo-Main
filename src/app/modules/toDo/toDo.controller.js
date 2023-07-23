@@ -34,10 +34,25 @@ const getAllToDo = catchAsync(async (req, res) => {
   });
 });
 
+const updateToDo = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const updatedToDo = req.body;
+  const user = req.verifiedUser;
+
+  const result = await toDoService.updateToDoInDB(id, updatedToDo, user);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "ToDo item updated successfully.",
+    data: result,
+  });
+});
 
 const toDoController = {
   createToDo,
   getAllToDo,
+  updateToDo,
 };
 
 module.exports = toDoController;
