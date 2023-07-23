@@ -1,3 +1,4 @@
+const config = require("../../config");
 const ApiError = require("../../errors/ApiError");
 
 const globalErrorHandler = (error, req, res, next) => {
