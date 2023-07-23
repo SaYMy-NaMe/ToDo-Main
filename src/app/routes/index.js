@@ -1,6 +1,6 @@
 const express = require("express");
 const authRoutes = require("../modules/auth/auth.route");
-const userRoutes = require("../modules/user/user.route");
+const toDoRoutes = require("../modules/toDo/toDo.route");
 
 const routes = express.Router();
 
@@ -10,8 +10,8 @@ const moduleRoutes = [
     route: authRoutes,
   },
   {
-    path: "/users",
-    route: userRoutes,
+    path: "/todos",
+    route: toDoRoutes,
   },
 ];
 

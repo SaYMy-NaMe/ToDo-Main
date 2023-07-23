@@ -1,8 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const routes = require("./app/routes");
 const globalErrorHandler = require("./app/middlewares/globalErrorHandler");
 
 const app = express();
+app.use(cors());
 
 // parser
 app.use(express.json());
