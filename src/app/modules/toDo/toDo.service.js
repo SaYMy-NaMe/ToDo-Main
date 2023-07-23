@@ -13,9 +13,19 @@ const createToDoInDB = async (user, payload) => {
   return result;
 };
 
+const getAllToDoFromDB = async (user) => {
+  const { id } = user;
+  const query = "SELECT * FROM todos WHERE user_id = $1";
+  const values = [id];
+  const result = (await pool.query(query, values)).rows;
+
+  return result;
+};
+
 
 const toDoService = {
   createToDoInDB,
+  getAllToDoFromDB,
 };
 
 module.exports = toDoService;

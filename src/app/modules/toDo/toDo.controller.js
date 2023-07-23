@@ -17,9 +17,27 @@ const createToDo = catchAsync(async (req, res) => {
   });
 });
 
+const getAllToDo = catchAsync(async (req, res) => {
+  const user = req.verifiedUser;
+
+  const result = await toDoService.getAllToDoFromDB(user);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: `${
+      result.length === 0
+        ? "No ToDo items found for the user."
+        : "ToDo items retrieved successfully."
+    }`,
+    data: result,
+  });
+});
+
 
 const toDoController = {
   createToDo,
+  getAllToDo,
 };
 
 module.exports = toDoController;
