@@ -102,5 +102,158 @@ function login(event) {
     });
 }
 
+function createTodo(event) {
+  event.preventDefault();
 
-    
+  // Get input values
+  const title = document.getElementById("title").value;
+  const description = document.getElementById("description").value;
+
+  // Get access token from localStorage or session
+  const accessToken = localStorage.getItem("accessToken");
+
+  // Create todo request body
+  const todoData = {
+    title: title,
+    description: description,
+  };
+
+  // Make a POST request to create a todo
+  fetch("http://localhost:8000/api/v1/todos", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${accessToken}`,
+    },
+    body: JSON.stringify(todoData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle create todo response
+      if (data.success) {
+        // Clear input fields
+        document.getElementById("title").value = "";
+        document.getElementById("description").value = "";
+
+        // Fetch and display updated todo list
+        fetchTodoList(accessToken);
+      } else {
+        // Show error message
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred while creating the todo. Please try again.");
+    });
+}
+
+function updateTodoStatus(todoId, isDone) {
+  // Get access token from localStorage or session
+  const accessToken = localStorage.getItem("accessToken");
+
+  // Create todo request body
+  const todoData = {
+    is_done: isDone,
+  };
+
+  // Make a PATCH request to update the todo status
+  fetch(`http://localhost:8000/api/v1/todos/${todoId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${accessToken}`,
+    },
+    body: JSON.stringify(todoData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle update todo response
+      if (data.success) {
+        // Fetch and display updated todo list
+        fetchTodoList(accessToken);
+      } else {
+        // Show error message
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred while updating the todo. Please try again.");
+    });
+}
+
+function deleteTodoItem(todoId) {
+  // Get access token from localStorage or session
+  const accessToken = localStorage.getItem("accessToken");
+
+  // Make a DELETE request to delete the todo item
+  fetch(`http://localhost:8000/api/v1/todos/${todoId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle delete todo response
+      if (data.success) {
+        // Fetch and display updated todo list
+        fetchTodoList(accessToken);
+      } else {
+        // Show error message
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("An error occurred while deleting the todo. Please try again.");
+    });
+}
+function fetchTodoList(accessToken) {
+  // Make a GET request to fetch the todo list
+  fetch("http://localhost:8000/api/v1/todos", {
+    headers: {
+      Authorization: `${accessToken}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Handle fetch todo list response
+      if (data.success) {
+        // Clear existing todo list
+        const todoList = document.getElementById("todo-items");
+        todoList.innerHTML = "";
+
+        // Display user's todo list
+        const todoItems = data.data;
+
+        todoItems.forEach((item) => {
+          const itemHTML = `
+            <li class="aToDo">
+       <div> 
+       <input type="checkbox" onchange="updateTodoStatus(${
+         item.id
+       }, this.checked)" ${item.is_done ? "checked" : ""}>
+       <p> ${item.title}</p>
+       <button onclick="deleteTodoItem(${item.id})">Delete</button>
+      </div>
+              <p>Description: ${item.description}</p>
+            </li>
+         
+          `;
+
+          todoList.innerHTML += itemHTML;
+        });
+      } else {
+        // Show error message
+        alert(data.message);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert(
+        "An error occurred while fetching the todo list. Please try again."
+      );
+    });
+}

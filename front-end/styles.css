@@ -57,7 +57,36 @@ a:hover {
   text-decoration: underline;
 }
 
+.todo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #e6ccff; /* light purple */
+  border-radius: 5px;
+}
 
+.todo-item label {
+  margin-right: 10px;
+}
+
+.todo-item button {
+  background-color: #ff6666; /* coral */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.todo-item button:hover {
+  background-color: #e64d4d; /* darker coral */
+}
+
+.todo-item input[type="checkbox"] {
+  margin-left: 10px;
+}
 
 .aToDo div {
   display: flex;
