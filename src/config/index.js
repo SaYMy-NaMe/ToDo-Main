@@ -9,12 +9,9 @@ module.exports = {
   port: process.env.PORT,
 
   db: {
-    host: process.env.HOST,
-    database_port: process.env.DATABASE_PORT,
-    database: process.env.DATABASE,
-    user: process.env.USER,
-    password: process.env.PASSWORD,
+    supabase_url: process.env.SUPABASE_URL,
   },
+  
   jwt: {
     secret: process.env.JWT_SECRET,
     expires_in: process.env.JWT_EXPIRES_IN,
